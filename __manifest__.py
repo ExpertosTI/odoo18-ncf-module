@@ -1,11 +1,12 @@
 {
-    'name': 'Número de Comprobante Fiscal RD - RENACE',
-    'version': '1.0',
+    'name': 'NCF República Dominicana',
+    'version': '16.0.1.0.0',
     'category': 'Accounting',
     'summary': 'Genera Número de Comprobante Fiscal para República Dominicana - Proyecto RENACE',
     'author': 'Adderly Marte',
     'website': 'https://renace.tech',
     'license': 'LGPL-3',
+    'support': 'adderlymarte@renace.tech',
     'depends': ['account'],
     'data': [
         'security/ir.model.access.csv',
