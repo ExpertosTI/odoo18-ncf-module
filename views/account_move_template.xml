@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Heredar el informe original de la factura para reemplazar el título y mostrar NCF si procede -->
+        <template id="report_invoice_document_with_ncf" inherit_id="account.report_invoice_document">
+            <xpath expr="//h2" position="replace">
+                <h2>
+                    <!-- Si se usa NCF -> Factura Fiscal, sino -> Factura Final -->
+                    <t t-if="o.use_ncf">
+                        <span>Factura Fiscal</span>
+                    </t>
+                    <t t-else="">
+                        <span>Factura Final</span>
+                    </t>
+                </h2>
+                <!-- Mostrar NCF si se usa NCF y existe un valor en ncf -->
+                <t t-if="o.use_ncf and o.ncf">
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <strong>Número de Comprobante Fiscal (NCF): </strong>
+                            <span t-field="o.ncf" />
+                        </div>
+                    </div>
+                </t>
+            </xpath>
+        </template>
+    </data>
+</odoo>

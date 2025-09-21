@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="model_ncf_sequence_wizard" model="ir.model">
+            <field name="name">NCF Sequence Wizard</field>
+            <field name="model">ncf.sequence.wizard</field>
+            <field name="state">base</field>
+            <field name="info">Modelo Transient para el Wizard de selección de NCF</field>
+            <field name="modules" eval="['ncf']"/>
+        </record>
+    </data>
+</odoo>

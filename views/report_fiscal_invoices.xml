@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+            id="action_report_fiscal_invoice"
+            model="account.move"
+            string="Reporte Facturas Fiscales"
+            report_type="qweb-pdf"
+            file="ncf.report_fiscal_invoice"
+            name="ncf.report_fiscal_invoice"
+        />
+
+        <template id="report_fiscal_invoices_template">
+            <t t-call="web.basic_layout">
+                <t t-set="doc_ids" t-value="doc_ids"/>
+                <t t-set="docs" t-value="doc_model.browse(doc_ids).filtered(lambda r: r.use_ncf and r.move_type == 'out_invoice')"/>
+                <div class="page">
+                    <h2>Listado de Facturas Fiscales</h2>
+                    <table class="table table-sm mt-3">
+                        <thead>
+                            <tr>
+                                <th>Número</th>
+                                <th>Cliente</th>
+                                <th>Total</th>
+                                <th>NCF</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="docs" t-as="inv">
+                                <tr>
+                                    <td><span t-field="inv.name"/></td>
+                                    <td><span t-field="inv.partner_id"/></td>
+                                    <td><span t-field="inv.amount_total"/></td>
+                                    <td><span t-field="inv.ncf"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </template>
+
+        <template id="report_fiscal_invoice">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page">
+                        <div class="row">
+                            <div class="col-12">
+                                <h2>Factura Fiscal <span t-field="o.ncf"/></h2>
+                            </div>
+                        </div>
+                        <div class="row" t-if="o.use_ncf">
+                            <div class="col-12">
+                                <span>NCF: </span>
+                                <span t-field="o.ncf"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <record id="action_report_fiscal_invoices_window" model="ir.actions.act_window">
+            <field name="name">Facturas Fiscales</field>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('use_ncf','=',True), ('move_type','=','out_invoice')]</field>
+            <field name="context">{'search_default_filter_posted': 1}</field>
+        </record>
+
+        <menuitem id="menu_report_fiscal_invoices"
+                  name="Reporte Facturas Fiscales"
+                  parent="account.menu_finance_reports"
+                  action="action_report_fiscal_invoices_window"
+                  sequence="80"/>
+    </data>
+</odoo>
