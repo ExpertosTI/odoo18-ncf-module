@@ -1,6 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_ncf_sequence_user,NCF Sequence User Access,ncf.model_ncf_sequence,account.group_account_invoice,1,0,0,0
-access_ncf_sequence_accountant,NCF Sequence Accountant Access,ncf.model_ncf_sequence,account.group_account_user,1,1,1,0
-access_ncf_sequence_manager,NCF Sequence Manager Access,ncf.model_ncf_sequence,account.group_account_manager,1,1,1,1
-access_ncf_sequence_wizard_user,NCF Sequence Wizard User Access,ncf.model_ncf_sequence_wizard,account.group_account_invoice,1,1,1,1
-access_ncf_sequence_wizard_accountant,NCF Sequence Wizard Accountant Access,ncf.model_ncf_sequence_wizard,account.group_account_user,1,1,1,1
+access_ncf_sequence,access.ncf.sequence,model_ncf_sequence,base.group_user,1,1,1,1
+access_ncf_sequence_user,ncf.sequence.user,model_ncf_sequence,account.group_account_invoice,1,1,1,1
+access_ncf_sequence_manager,ncf.sequence.manager,model_ncf_sequence,account.group_account_manager,1,1,1,1
+access_ncf_sequence_wizard_user,access.ncf.sequence.wizard,model_ncf_sequence_wizard,account.group_account_invoice,1,1,1,1

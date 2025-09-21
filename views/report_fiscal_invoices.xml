@@ -63,7 +63,7 @@
         <record id="action_report_fiscal_invoices_window" model="ir.actions.act_window">
             <field name="name">Facturas Fiscales</field>
             <field name="res_model">account.move</field>
-            <field name="view_mode">list,form</field>
+            <field name="view_mode">tree,form</field>
             <field name="domain">[('use_ncf','=',True), ('move_type','=','out_invoice')]</field>
             <field name="context">{'search_default_filter_posted': 1}</field>
         </record>

@@ -1,50 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Template para facturas con NCF según regulaciones dominicanas -->
-        <template id="report_invoice_document_with_ncf" 
-                  name="Factura con NCF - República Dominicana" 
-                  inherit_id="account.report_invoice_document"
-                  priority="20">
-            
-            <!-- Reemplazar el título usando layout_document_title (Odoo 18) -->
-            <xpath expr="//t[@t-set='layout_document_title']" position="replace">
-                <t t-set="layout_document_title">
-                    <!-- Título para facturas SIN NCF (secuencia B02) -->
-                    <span t-if="not o.ncf or not o.use_ncf">Factura Final</span>
-                    
-                    <!-- Título para facturas CON NCF (secuencia B01) según tipo -->
-                    <span t-elif="o.ncf and o.use_ncf">
-                        <span t-if="o.ncf_type == '01'">Factura de Crédito Fiscal</span>
-                        <span t-elif="o.ncf_type == '02'">Factura de Consumo</span>
-                        <span t-elif="o.ncf_type == '03'">Nota de Débito</span>
-                        <span t-elif="o.ncf_type == '04'">Nota de Crédito</span>
-                        <span t-elif="o.ncf_type == '11'">Comprobante Gubernamental</span>
-                        <span t-elif="o.ncf_type == '12'">Comprobante Especial</span>
-                        <span t-elif="o.ncf_type == '14'">Comprobante de Regímenes Especiales</span>
-                        <span t-elif="o.ncf_type == '15'">Comprobante Gubernamental Especial</span>
-                        <span t-else="">Comprobante Fiscal</span>
-                    </span>
-                </t>
-            </xpath>
-            
-            <!-- Agregar información NCF debajo del título para facturas CON NCF -->
-            <xpath expr="//t[@t-set='layout_document_title']" position="after">
-                <t t-if="o.ncf and o.use_ncf">
-                    <br/>
-                    <div style="text-align: center; padding: 15px; background: #f8f9fa; border: 2px solid #007bff; border-radius: 8px; margin: 15px 0;">
-                        <div style="font-family: monospace; font-size: 18px; font-weight: bold; color: #2c3e50;">
-                            NCF: <span t-field="o.ncf"/>
-                        </div>
-                        <div style="font-size: 12px; color: #6c757d; margin-top: 5px;">
-                            NÚMERO DE COMPROBANTE FISCAL
+        <!-- Heredar el informe original de la factura para reemplazar el título y mostrar NCF si procede -->
+        <template id="report_invoice_document_with_ncf" inherit_id="account.report_invoice_document">
+            <xpath expr="//h2" position="replace">
+                <h2>
+                    <!-- Si se usa NCF -> Factura Fiscal, sino -> Factura Final -->
+                    <t t-if="o.use_ncf">
+                        <span>Factura Fiscal</span>
+                    </t>
+                    <t t-else="">
+                        <span>Factura Final</span>
+                    </t>
+                </h2>
+                <!-- Mostrar NCF si se usa NCF y existe un valor en ncf -->
+                <t t-if="o.use_ncf and o.ncf">
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <strong>Número de Comprobante Fiscal (NCF): </strong>
+                            <span t-field="o.ncf" />
                         </div>
                     </div>
                 </t>
             </xpath>
-            
-
-            
         </template>
     </data>
 </odoo>
