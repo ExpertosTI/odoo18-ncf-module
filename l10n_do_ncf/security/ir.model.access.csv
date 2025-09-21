@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ncf_sequence_user,ncf.sequence.user,model_ncf_sequence,account.group_account_user,1,0,0,0
+access_ncf_sequence_manager,ncf.sequence.manager,model_ncf_sequence,account.group_account_manager,1,1,1,1
+access_ncf_fiscal_type_user,ncf.fiscal.type.user,model_ncf_fiscal_type,account.group_account_user,1,0,0,0
+access_ncf_fiscal_type_manager,ncf.fiscal.type.manager,model_ncf_fiscal_type,account.group_account_manager,1,1,1,1

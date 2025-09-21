@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ncf_sequence_form" model="ir.ui.view">
+        <field name="name">ncf.sequence.form</field>
+        <field name="model">ncf.sequence</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="prefix"/>
+                        <field name="padding"/>
+                        <field name="number_next_actual"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ncf_sequence" model="ir.actions.act_window">
+        <field name="name">Secuencias NCF</field>
+        <field name="res_model">ncf.sequence</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_ncf_sequence" name="Secuencias NCF" parent="account.menu_finance_configuration" action="action_ncf_sequence"/>
+</odoo>
