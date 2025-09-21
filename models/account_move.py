@@ -1,182 +1,82 @@
-# -*- coding: utf-8 -*-
-"""
-Extensión del modelo account.move para integración con NCF (Número de Comprobante Fiscal)
-según regulaciones fiscales de República Dominicana.
-"""
-
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError, ValidationError
-import logging
-
-_logger = logging.getLogger(__name__)
-
+from odoo.exceptions import UserError
 
 class AccountMove(models.Model):
-    """Extensión de account.move para funcionalidad NCF."""
-    
     _inherit = 'account.move'
 
-    # Campos NCF
-    use_ncf = fields.Boolean(
-        string='Usar NCF',
-        default=False,
-        help="Indica si esta factura debe usar Número de Comprobante Fiscal"
-    )
-    
-    ncf = fields.Char(
-        string='NCF',
-        size=19,
-        help="Número de Comprobante Fiscal generado automáticamente"
-    )
-    
-    ncf_sequence_id = fields.Many2one(
-        'ncf.sequence',
-        string='Secuencia NCF',
-        help="Secuencia utilizada para generar el NCF"
-    )
-    
-    ncf_type = fields.Selection([
-        ('01', 'Crédito Fiscal'),
-        ('02', 'Consumo'),
-        ('03', 'Nota Débito'),
-        ('04', 'Nota Crédito'),
-        ('11', 'Gubernamental'),
-        ('12', 'Especial'),
-        ('14', 'Regímenes Especiales'),
-        ('15', 'Gubernamental Especial')
-    ], 
-    string='Tipo de NCF', 
-    default='02',
-    help="Tipo de comprobante fiscal según regulaciones dominicanas"
-    )
-    
-    origin_ncf = fields.Char(
-        string='NCF Original',
-        size=19,
-        help="NCF original para notas de crédito/débito"
+    ncf = fields.Char(string='Número de Comprobante Fiscal', readonly=True)
+    use_ncf = fields.Boolean(string='Usar NCF', default=True)
+    ncf_fiscal_type_id = fields.Many2one(
+        'ncf.fiscal.type',
+        string='Tipo de Comprobante',
+        help='Tipo de comprobante fiscal NCF'
     )
 
-    @api.constrains('ncf')
-    def _check_ncf_format(self):
-        """Validar formato del NCF."""
-        for record in self:
-            if record.ncf and len(record.ncf) > 19:
-                raise ValidationError(_('El NCF no puede tener más de 19 caracteres'))
+    @api.onchange('use_ncf')
+    def _onchange_use_ncf(self):
+        """Handle NCF usage change - auto-select fiscal type if only one exists"""
+        if self.use_ncf:
+            fiscal_types = self.env['ncf.fiscal.type'].search([('active', '=', True)])
+            if len(fiscal_types) == 1:
+                self.ncf_fiscal_type_id = fiscal_types[0]
+        else:
+            self.ncf_fiscal_type_id = False
 
-    def _post(self, soft=True):
-        """Override _post para generar NCF automáticamente al confirmar factura."""
+    def action_post(self):
         for move in self:
-            if move.move_type == 'out_invoice' and move.use_ncf and not move.ncf:
-                if not move.ncf_sequence_id:
-                    # Buscar secuencia por defecto
-                    sequence = self.env['ncf.sequence'].search([
-                        ('company_id', '=', move.company_id.id),
-                        ('active', '=', True)
-                    ], limit=1)
-                    if not sequence:
-                        raise UserError(_("No se ha configurado una secuencia NCF activa para esta compañía."))
-                    move.ncf_sequence_id = sequence
+            if move.move_type == 'out_invoice' and move.use_ncf:
+                if not move.ncf_fiscal_type_id:
+                    # Try auto-selection one more time
+                    fiscal_types = self.env['ncf.fiscal.type'].search([('active', '=', True)])
+                    if len(fiscal_types) == 1:
+                        move.ncf_fiscal_type_id = fiscal_types[0]
+                    else:
+                        raise UserError(_("Debe seleccionar un tipo de comprobante fiscal antes de confirmar la factura."))
                 
-                try:
-                    move.ncf = move.ncf_sequence_id._next()
-                    move.payment_reference = move.ncf
-                    _logger.debug(f"NCF {move.ncf} asignado a factura {move.name}")
-                except Exception as e:
-                    _logger.error(f"Error asignando NCF a factura {move.name}: {e}")
-                    raise UserError(_('Error al generar NCF: %s') % str(e))
-        
-        return super()._post(soft=soft)
+                # Generate NCF using the selected fiscal type's sequence
+                if move.ncf_fiscal_type_id and move.ncf_fiscal_type_id.sequence_id:
+                    # Use the standard Odoo sequence
+                    move.ncf = move.ncf_fiscal_type_id.sequence_id._next()
+                else:
+                    raise UserError(_("El tipo de comprobante seleccionado no tiene una secuencia configurada."))
+        return super(AccountMove, self).action_post()
 
     def toggle_use_ncf(self):
-        """Alternar el uso de NCF y abrir wizard de selección si es necesario."""
+        """Toggle NCF usage"""
+        for move in self:
+            move.use_ncf = not move.use_ncf
+
+    def action_set_ncf_type(self):
+        """Action to set NCF type with improved user experience"""
         self.ensure_one()
+        fiscal_types = self.env['ncf.fiscal.type'].search([('active', '=', True)])
         
-        if self.state != 'draft':
-            raise UserError(_('Solo se puede modificar el NCF en facturas en borrador'))
-        
-        if not self.use_ncf:
-            # Activar NCF - abrir wizard para seleccionar secuencia
-            action = {
-                'name': _('Seleccionar Tipo de NCF'),
-                'type': 'ir.actions.act_window',
-                'res_model': 'ncf.sequence.wizard',
-                'view_mode': 'form',
-                'target': 'new',
-                'context': {
-                    'default_move_id': self.id,
-                    'default_company_id': self.company_id.id
-                }
-            }
-            return action
-        else:
-            # Desactivar NCF - mostrar confirmación
-            self.write({
-                'use_ncf': False,
-                'ncf': False,
-                'ncf_sequence_id': False
-            })
-            _logger.debug(f"NCF desactivado para factura {self.name}")
-            
-            # Retornar mensaje de éxito
+        if len(fiscal_types) == 0:
+            raise UserError(_("No hay tipos de comprobante fiscal configurados. Configure al menos un tipo en el menú de Contabilidad."))
+        elif len(fiscal_types) == 1:
+            self.ncf_fiscal_type_id = fiscal_types[0]
+            self.use_ncf = True
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
-                    'title': _('NCF Desactivado'),
-                    'message': _('El NCF ha sido desactivado correctamente para esta factura.'),
+                    'title': _('✅ NCF Configurado'),
+                    'message': _('Tipo de comprobante seleccionado: %s') % fiscal_types[0].name,
                     'type': 'success',
-                    'sticky': False,
                 }
             }
-
-    @api.model
-    def create(self, vals):
-        """Override create para manejar NCF en creación de facturas."""
-        move = super().create(vals)
-        
-        # Auto-asignar secuencia NCF si el partner tiene una por defecto
-        if (move.partner_id and 
-            move.move_type == 'out_invoice' and 
-            not move.ncf_sequence_id and
-            hasattr(move.partner_id, 'default_ncf_sequence_id') and
-            move.partner_id.default_ncf_sequence_id):
-            
-            move.write({
-                'use_ncf': True,
-                'ncf_sequence_id': move.partner_id.default_ncf_sequence_id.id
-            })
-            _logger.debug(f"Secuencia NCF auto-asignada desde partner para factura {move.name}")
-        
-        return move
-
-    def write(self, vals):
-        """Override write para validaciones adicionales."""
-        # Validar que no se modifique NCF en facturas confirmadas
-        if 'ncf' in vals:
-            for record in self:
-                if record.state != 'draft' and record.ncf != vals.get('ncf'):
-                    raise UserError(_('No se puede modificar el NCF de una factura confirmada'))
-        
-        return super().write(vals)
-
-    def _print_invoice_auto(self):
-        """
-        Devuelve la acción del reporte de factura nativo (PDF) 
-        para que se imprima automáticamente.
-        """
-        return self.env.ref('account.account_invoices').report_action(self)
-
-    def action_view_ncf_sequence(self):
-        """Acción para ver la secuencia NCF asociada."""
-        self.ensure_one()
-        if not self.ncf_sequence_id:
-            raise UserError(_('Esta factura no tiene una secuencia NCF asociada'))
-        
-        return {
-            'name': _('Secuencia NCF'),
-            'type': 'ir.actions.act_window',
-            'res_model': 'ncf.sequence',
-            'res_id': self.ncf_sequence_id.id,
-            'view_mode': 'form',
-            'target': 'current',
-        }
+        else:
+            # Enable NCF and show selection dialog
+            self.use_ncf = True
+            return {
+                'name': _('Seleccionar Tipo de Comprobante'),
+                'type': 'ir.actions.act_window',
+                'res_model': 'ncf.fiscal.type',
+                'view_mode': 'tree',
+                'target': 'new',
+                'domain': [('active', '=', True)],
+                'context': {
+                    'default_active': True,
+                    'search_default_active': True,
+                }
+            }

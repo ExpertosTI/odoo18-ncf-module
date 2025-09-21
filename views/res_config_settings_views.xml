@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="res_config_settings_view_form_ncf" model="ir.ui.view">  <!-- Simplificación del ID -->
-        <field name="name">res.config.settings.form.ncf</field>  <!-- Simplificación del nombre -->
+    <record id="res_config_settings_view_form_inherit_ncf" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ncf</field>
         <field name="model">res.config.settings</field>
         <field name="inherit_id" ref="account.res_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//app[@name='account']" position="inside">
-                <block title="Secuencias NCF">
-                    <setting string="Secuencia NCF" help="Configuración de secuencias para NCF">
+            <xpath expr="//div[@id='invoicing_settings']" position="inside">
+                <div class="col-12 col-lg-6 o_setting_box">
+                    <div class="o_setting_left_pane"/>
+                    <div class="o_setting_right_pane">
+                        <span class="o_form_label">Secuencia NCF</span>
+                        <div class="text-muted">
+                            Configurar la secuencia NCF por defecto
+                        </div>
                         <div class="content-group">
-                            <div class="mt8">
+                            <div class="mt16">
                                 <field name="ncf_sequence_id"/>
                             </div>
                         </div>
-                    </setting>
-                </block>
+                    </div>
+                </div>
             </xpath>
         </field>
     </record>
