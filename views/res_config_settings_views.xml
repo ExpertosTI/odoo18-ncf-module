@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_ncf" model="ir.ui.view">  <!-- Simplificación del ID -->
+        <field name="name">res.config.settings.form.ncf</field>  <!-- Simplificación del nombre -->
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='account']" position="inside">
+                <block title="Secuencias NCF">
+                    <setting string="Secuencia NCF" help="Configuración de secuencias para NCF">
+                        <div class="content-group">
+                            <div class="mt8">
+                                <field name="ncf_sequence_id"/>
+                            </div>
+                        </div>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

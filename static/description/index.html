@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo NCF - Renace Tech</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;500;700&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2A2F4F;
+            --secondary: #917FB3;
+            --accent: #E5BEEC;
+            --text: #FDE2F3;
+            --background: #0F0F0F;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .cyber-border {
+            position: relative;
+            border: 3px solid var(--secondary);
+            padding: 2rem;
+            margin: 2rem;
+            box-shadow: 0 0 15px var(--secondary);
+            background: linear-gradient(45deg, #1a1a1a 0%, #0a0a0a 100%);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .neon-title {
+            font-family: 'JetBrains Mono', monospace;
+            text-align: center;
+            font-size: 3.5rem;
+            background: linear-gradient(45deg, var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(145, 127, 179, 0.4);
+            margin: 2rem 0;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px var(--secondary); }
+            to { text-shadow: 0 0 20px var(--accent), 0 0 10px var(--secondary); }
+        }
+
+        .feature-card {
+            background: rgba(42, 47, 79, 0.3);
+            padding: 2rem;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(145, 127, 179, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin: 3rem 0;
+        }
+
+        .tech-item {
+            padding: 1rem 2rem;
+            border: 2px solid var(--secondary);
+            border-radius: 30px;
+            font-family: 'JetBrains Mono', monospace;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .code-snippet {
+            background: #1a1a1a;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .code-snippet pre {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent);
+            overflow-x: auto;
+        }
+
+        .documentation-section {
+            max-width: 800px;
+            margin: 4rem auto;
+            padding: 2rem;
+            border-left: 4px solid var(--secondary);
+        }
+
+        @media (max-width: 768px) {
+            .neon-title {
+                font-size: 2.5rem;
+            }
+            
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-border">
+        <h1 class="neon-title">Gestión NCF Odoo 17</h1>
+        
+        <div class="grid-container">
+            <div class="feature-card">
+                <h3>🚀 Generación Automática</h3>
+                <p>Secuencias configurables con múltiples patrones y validación en tiempo real</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>📊 Reporting Avanzado</h3>
+                <p>Exportación masiva de comprobantes con plantillas personalizables</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🔐 Seguridad DGII</h3>
+                <p>Encriptación de datos y validaciones fiscales integradas</p>
+            </div>
+        </div>
+
+        <div class="tech-stack">
+            <div class="tech-item">Python 3.10</div>
+            <div class="tech-item">XML</div>
+            <div class="tech-item">PostgreSQL</div>
+            <div class="tech-item">JavaScript ES6</div>
+            <div class="tech-item">QWeb</div>
+        </div>
+
+        <div class="documentation-section">
+            <h2>📚 Documentación Técnica</h2>
+            <div class="code-snippet">
+                <pre><code>
+# models/account_move.py
+@api.constrains('ncf')
+def _check_ncf_format(self):
+    """Valida formato NCF según normativa DGII"""
+    ncf_regex = r'^[A-Z]{1}\d{2}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])\d{8}$'
+    if not re.match(ncf_regex, self.ncf):
+        raise ValidationError(_"Formato NCF inválido"))
+                </code></pre>
+            </div>
+        </div>
+
+        <footer style="text-align: center; margin-top: 4rem; opacity: 0.8;">
+            <p>Desarrollado con ❤️ por <strong>Adderly Marte</strong></p>
+            <p>🚀 <a href="https://renace.tech" target="_blank" style="color: var(--accent);">renace.tech</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // Efecto de scroll suave
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Animación de cards al hacer scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        });
+
+        document.querySelectorAll('.feature-card').forEach((card) => {
+            card.style.opacity = 0;
+            card.style.transform = 'translateY(50px)';
+            card.style.transition = 'all 0.6s ease-out';
+            observer.observe(card);
+        });
+
+        // Toggle dark/light mode
+        const toggle = document.createElement('div');
+        toggle.className = 'dark-mode-toggle';
+        toggle.innerHTML = '🌓';
+        document.body.appendChild(toggle);
+
+        toggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            if (document.body.classList.contains('light-mode')) {
+                document.documentElement.style.setProperty('--background', '#F5F5F5');
+                document.documentElement.style.setProperty('--text', '#2A2F4F');
+            } else {
+                document.documentElement.style.setProperty('--background', '#0F0F0F');
+                document.documentElement.style.setProperty('--text', '#FDE2F3');
+            }
+        });
+    </script>
+</body>
+</html>
