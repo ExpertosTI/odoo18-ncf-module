@@ -29,18 +29,18 @@
             </field>
         </record>
 
-        <!-- Vista List (anteriormente Tree) -->
+        <!-- Vista Tree -->
         <record id="view_ncf_sequence_tree" model="ir.ui.view">
-            <field name="name">ncf.sequence.list</field>
+            <field name="name">ncf.sequence.tree</field>
             <field name="model">ncf.sequence</field>
             <field name="arch" type="xml">
-                <list>
+                <tree>
                     <field name="name"/>
                     <field name="prefix"/>
                     <field name="number_next_actual"/>
                     <field name="company_id" groups="base.group_multi_company"/>
                     <field name="active"/>
-                </list>
+                </tree>
             </field>
         </record>
 
@@ -48,7 +48,7 @@
         <record id="action_ncf_sequence" model="ir.actions.act_window">
             <field name="name">Secuencias NCF</field>
             <field name="res_model">ncf.sequence</field>
-            <field name="view_mode">list,form</field>
+            <field name="view_mode">tree,form</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
                     Cree su primera secuencia NCF

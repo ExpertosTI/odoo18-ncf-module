@@ -1,73 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Vista heredada de account.move para funcionalidad NCF -->
         <record id="view_move_form_inherit_ncf" model="ir.ui.view">
             <field name="name">account.move.form.inherit.ncf</field>
             <field name="model">account.move</field>
             <field name="inherit_id" ref="account.view_move_form"/>
             <field name="arch" type="xml">
-                <!-- Botones en el header para activar/desactivar NCF -->
                 <header position="inside">
                     <button name="toggle_use_ncf" 
                             type="object"
-                            string="🔧 Activar NCF"
-                            help="Activar el uso de Número de Comprobante Fiscal para esta factura"
-                            invisible="use_ncf or move_type not in ('out_invoice', 'out_refund') or state != 'draft'"
-                            class="btn-primary oe_highlight"
-                            icon="fa-plus-circle"
-                            groups="account.group_account_invoice"/>
+                            string="Usar NCF"
+                            invisible="use_ncf or move_type != 'out_invoice'"/>
                     <button name="toggle_use_ncf" 
                             type="object"
-                            string="❌ Desactivar NCF"
-                            help="Desactivar el uso de Número de Comprobante Fiscal para esta factura"
-                            invisible="not use_ncf or move_type not in ('out_invoice', 'out_refund') or state != 'draft'"
-                            class="btn-secondary"
-                            icon="fa-minus-circle"
-                            confirm="¿Está seguro de que desea desactivar el NCF para esta factura?"
-                            groups="account.group_account_invoice"/>
+                            string="Quitar NCF"
+                            invisible="not use_ncf or move_type != 'out_invoice'"/>
                 </header>
-                
-                <!-- Campos NCF después de payment_reference -->
                 <field name="payment_reference" position="after">
-                    <field name="use_ncf" 
-                           column_invisible="1"
-                           help="Indica si esta factura utiliza Número de Comprobante Fiscal"/>
+                    <field name="use_ncf" invisible="1"/>
                     <field name="ncf" 
-                           string="NCF"
-                           help="Número de Comprobante Fiscal generado automáticamente"
-                           column_invisible="not use_ncf or move_type not in ('out_invoice', 'out_refund')"
-                           readonly="state != 'draft'"
-                           placeholder="Se generará automáticamente al confirmar"/>
-                    <field name="ncf_sequence_id"
-                           string="Secuencia NCF"
-                           help="Secuencia utilizada para generar el NCF"
-                           domain="[('active', '=', True), ('company_id', '=', company_id)]"
-                           context="{'default_company_id': company_id}"
-                           options="{'no_create': True}"
-                           column_invisible="not use_ncf or move_type not in ('out_invoice', 'out_refund')"
+                           invisible="not use_ncf or move_type != 'out_invoice'"
                            readonly="state != 'draft'"/>
-                    <field name="ncf_type"
-                           string="Tipo NCF"
-                           help="Tipo de Número de Comprobante Fiscal"
-                           column_invisible="not use_ncf or move_type not in ('out_invoice', 'out_refund')"
-                           readonly="1"/>
-                </field>
-            </field>
-        </record>
-        
-        <!-- Vista de lista heredada para mostrar información NCF -->
-        <record id="view_move_tree_inherit_ncf" model="ir.ui.view">
-            <field name="name">account.move.tree.inherit.ncf</field>
-            <field name="model">account.move</field>
-            <field name="inherit_id" ref="account.view_move_tree"/>
-            <field name="arch" type="xml">
-                <field name="name" position="after">
-                    <field name="ncf" 
-                           string="NCF"
-                           optional="hide"
-                           column_invisible="not use_ncf"/>
-                    <field name="use_ncf" column_invisible="1"/>
                 </field>
             </field>
         </record>
