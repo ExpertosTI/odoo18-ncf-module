@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Template para facturas con NCF según regulaciones dominicanas -->
+        <template id="report_invoice_document_with_ncf" 
+                  name="Factura con NCF - República Dominicana" 
+                  inherit_id="account.report_invoice_document"
+                  priority="20">
+            
+            <xpath expr="//span[@t-field='o.name']" position="replace">
+                <t t-if="o.ncf and o.use_ncf">
+                    <t t-if="o.ncf_type == '01'">Crédito Fiscal</t>
+                    <t t-elif="o.ncf_type == '02'">de Consumo</t>
+                    <t t-elif="o.ncf_type == '03'">Débito</t>
+                    <t t-elif="o.ncf_type == '04'">Crédito</t>
+                    <t t-elif="o.ncf_type == '11'">Gubernamental</t>
+                    <t t-elif="o.ncf_type == '14'">Regímenes Especiales</t>
+                    <t t-elif="o.ncf_type == '15'">Gubernamental Especial</t>
+                    <t t-else="">Fiscal</t>
+                </t>
+                <t t-else="">
+                    <span t-field="o.name"/>
+                </t>
+            </xpath>
+            <xpath expr="//t[@t-set='layout_document_title']" position="after">
+                <t t-if="o.ncf and o.use_ncf">
+                    <br/>
+                    <div style="text-align: center; padding: 15px; background: #f8f9fa; border: 2px solid #007bff; border-radius: 8px; margin: 15px 0;">
+                        <div style="font-family: monospace; font-size: 18px; font-weight: bold; color: #2c3e50;">
+                            NCF: <span t-field="o.ncf"/>
+                        </div>
+                        <div style="font-size: 12px; color: #6c757d; margin-top: 5px;">
+                            NÚMERO DE COMPROBANTE FISCAL
+                        </div>
+                        <div t-if="o.ncf_expiration_date" style="font-size: 11px; color: #6c757d; margin-top: 8px;">
+                            Válido hasta: <span t-field="o.ncf_expiration_date"/>
+                        </div>
+                    </div>
+                </t>
+            </xpath>
+        </template>
+    </data>
+</odoo>

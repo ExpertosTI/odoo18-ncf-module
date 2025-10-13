@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Secuencia NCF B02 - Factura de Consumo (Por Defecto) -->
+        <record id="ncf_sequence_b02" model="ncf.sequence">
+            <field name="name">Factura de Consumo</field>
+            <field name="prefix">B</field>
+            <field name="ncf_type">02</field>
+            <field name="padding">8</field>
+            <field name="number_next_actual">1</field>
+            <field name="active">True</field>
+        </record>
+        
+        <!-- Secuencia NCF B01 - Crédito Fiscal -->
+        <record id="ncf_sequence_b01" model="ncf.sequence">
+            <field name="name">Crédito Fiscal</field>
+            <field name="prefix">B</field>
+            <field name="ncf_type">01</field>
+            <field name="padding">8</field>
+            <field name="number_next_actual">1</field>
+            <field name="active">True</field>
+        </record>
+        
+    </data>
+</odoo>

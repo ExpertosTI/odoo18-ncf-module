@@ -1,0 +1,42 @@
+.ncf-selection-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.ncf-selection-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+}
+
+.ncf-selection-item:hover {
+    border-color: #007bff;
+    background: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.ncf-selection-item.selected {
+    border-color: #007bff;
+    background: #e7f3ff;
+}
+
+.ncf-selection-content {
+    font-size: 16px;
+}
+
+.ncf-selection-content strong {
+    color: #007bff;
+    font-size: 18px;
+}
+
+.ncf-selection-item .fa-check {
+    font-size: 20px;
+}
