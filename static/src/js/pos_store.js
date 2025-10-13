@@ -17,8 +17,19 @@ patch(PosStore.prototype, {
             return true;
         }
 
-        if ((name === 'PaymentScreen' || name === 'ReceiptScreen') && ncfType !== '01' && order && !order.ncf) {
+        if ((name === 'PaymentScreen' || name === 'ReceiptScreen') && order && !order.ncf) {
+            // Para 01: llegar aquí implica que ya hay partner
             await this._allocateNcf(order);
+        }
+
+        // Asegurar NCF para el primer pedido al entrar a la pantalla de productos
+        if (name === 'ProductScreen' && order && !order.ncf) {
+            // Si es 01, solo asigna si ya hay partner; si es 02 no requiere partner
+            if (ncfType === '01' && !partner) {
+                // do nothing until partner selected
+            } else {
+                await this._allocateNcf(order);
+            }
         }
 
         return await super.showScreen(name, props);

@@ -48,6 +48,8 @@ patch(ControlButtons.prototype, {
         } catch (e) {
             ncfSequences = [];
         }
+        // Filtrar entradas nulas o incompletas
+        ncfSequences = (ncfSequences || []).filter(seq => seq && (seq.ncf_type || seq.ncfType));
         if (ncfSequences.length === 0) {
             this.dialog.add(AlertDialog, {
                 title: _t('Secuencias NCF'),
@@ -66,11 +68,19 @@ patch(ControlButtons.prototype, {
             '15': 'Gubernamental Especial',
         };
         
-        const ncfTypes = ncfSequences.map(seq => ({
-            code: seq.ncf_type,
-            name: typeNames[seq.ncf_type] || seq.name,
-            prefix: seq.prefix
-        }));
+        const ncfTypes = ncfSequences.map(seq => {
+            const code = String(seq.ncf_type || seq.ncfType);
+            const name = typeNames[code] || seq.name || '';
+            const prefix = seq.prefix || '';
+            return { code, name, prefix };
+        });
+        if (ncfTypes.length === 0) {
+            this.dialog.add(AlertDialog, {
+                title: _t('Secuencias NCF'),
+                body: _t('No se encontraron secuencias NCF válidas para este punto de venta.'),
+            });
+            return;
+        }
         
         const currentType = order.ncf_type || '02';
         

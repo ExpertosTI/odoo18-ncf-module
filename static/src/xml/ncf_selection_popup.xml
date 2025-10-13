@@ -3,17 +3,19 @@
     <t t-name="ncf.NcfSelectionDialog" owl="1">
         <Dialog title="'Seleccionar Tipo de Comprobante'" size="'md'">
             <div class="ncf-selection-list">
-                <t t-foreach="props.ncfTypes" t-as="ncfType" t-key="ncfType.code">
-                    <div class="ncf-selection-item" 
-                         t-att-class="{ 'selected': ncfType.code === props.currentType }"
-                         t-on-click="() => this.selectType(ncfType.code)">
-                        <div class="ncf-selection-content">
-                            <strong>B<t t-esc="ncfType.code"/></strong>
-                            <span> - </span>
-                            <t t-esc="ncfType.name"/>
+                <t t-foreach="props.ncfTypes" t-as="ncfType" t-key="ncfType and ncfType.code or 0">
+                    <t t-if="ncfType and ncfType.code">
+                        <div class="ncf-selection-item" 
+                             t-att-class="{ 'selected': ncfType.code === props.currentType }"
+                             t-on-click="() => this.selectType(ncfType.code)">
+                            <div class="ncf-selection-content">
+                                <strong>B<t t-esc="ncfType.code or ''"/></strong>
+                                <span> - </span>
+                                <t t-esc="ncfType.name or ''"/>
+                            </div>
+                            <i t-if="ncfType.code === props.currentType" class="fa fa-check text-success"/>
                         </div>
-                        <i t-if="ncfType.code === props.currentType" class="fa fa-check text-success"/>
-                    </div>
+                    </t>
                 </t>
             </div>
             <t t-set-slot="footer">
